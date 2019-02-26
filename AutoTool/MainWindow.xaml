@@ -1,0 +1,84 @@
+﻿<Window x:Class="AutoTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AutoTool"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        Title="MainWindow" Height="600" Width="900">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="7*"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <DataGrid IsReadOnly="True"
+                  HeadersVisibility="Column"
+                  SelectionMode="Extended"
+                  Background="Transparent"
+                  GridLinesVisibility="None"
+                  BorderBrush="Transparent"
+                  Height="auto"
+                  Width="auto"                                                
+                  ItemsSource="{Binding}"
+                  x:Name="dataGridDanhSachTaiKhoan"
+                  CanUserAddRows="False"
+                  FontSize="13" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn     
+                    CanUserSort="True"
+                    Width="0.8*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock       
+                                IsHitTestVisible="False"
+                                Text="{Binding Token}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Padding="5 7.5 5 7.5"
+                                Height="30"
+                                Foreground="Black"
+                                TextTrimming="WordEllipsis">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock 
+                                Text="Token">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn     
+                    CanUserSort="True"
+                    Width="0.8*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock       
+                                IsHitTestVisible="False"
+                                Text="{Binding Token}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Padding="5 7.5 5 7.5"
+                                Height="30"
+                                Foreground="Black"
+                                TextTrimming="WordEllipsis">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock 
+                                Text="Token">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Name="btnImport" Grid.Row="1" Click="btnImport_Click">IMPORT</Button>
+    </Grid>
+</Window>
