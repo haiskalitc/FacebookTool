@@ -25,7 +25,7 @@ namespace AutoTool
     {
         NotifiableCollection<InformatonFacebook> danhSach = new NotifiableCollection<InformatonFacebook>() {
             new InformatonFacebook() { Token ="hẢI"},
-            new InformatonFacebook() { Token ="hẢI"},
+            new InformatonFacebook() { Token ="dasdas"},
             new InformatonFacebook() { Token ="hẢI"},
 
         };
