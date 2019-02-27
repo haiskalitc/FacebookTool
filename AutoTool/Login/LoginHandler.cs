@@ -12,7 +12,7 @@ namespace AutoTool.Login
     /// 1: Import token ==> Danh sách token
     /// 2. Lấy thông tin cá nhân từ token
     /// 3. Backup
-    /// 4. Đăng nhập, xử lý checkpoint nếu có
+    /// 4. Đăng nhập(dùng Cookie,Token), xử lý checkpoint nếu có
     /// </summary>
     public class LoginHandler
     {
