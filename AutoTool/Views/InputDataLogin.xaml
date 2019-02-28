@@ -1,0 +1,25 @@
+﻿<Window x:Class="AutoTool.Views.InputDataLogin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AutoTool.Views"
+        mc:Ignorable="d"
+        Title="InputDataLogin" 
+        WindowStartupLocation="CenterScreen" WindowStyle="None" Height="300" Width="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="8*"></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <TextBox Name="txtDataInput" Margin="10"></TextBox>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button Margin="10" FontWeight="Bold" FontSize="15" Background="Green" Grid.Column="0" Name="btnOk" Click="btnOk_Click">OK</Button>
+            <Button Margin="10" FontWeight="Bold" FontSize="15" Background="Red" Grid.Column="1" Name="btnDong" Click="btnDong_Click">Đóng</Button>
+        </Grid>
+    </Grid>
+</Window>
