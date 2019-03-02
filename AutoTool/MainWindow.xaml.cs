@@ -1,9 +1,11 @@
 ﻿using AutoTool.BaseModel;
+using AutoTool.Login;
 using AutoTool.Model;
 using AutoTool.Views;
 using AutoTool.Xuly;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,7 +33,7 @@ namespace AutoTool
     /// </summary>
     public partial class MainWindow : Window
     {
-        public int SO_ANH = 25;
+        public IWebDriver driver;
         NotifiableCollection<InformatonFacebook> danhSachTaiKhoan = new NotifiableCollection<InformatonFacebook>();
         public MainWindow()
         {
@@ -46,18 +48,6 @@ namespace AutoTool
         /// <param name="e"></param>
         private void btnImportToken_Click(object sender, RoutedEventArgs e)
         {
-            /// IMPORT TỪ FILE
-            //OpenFileDialog openFileDialog = new OpenFileDialog();
-            //openFileDialog.Filter = "Text|*.txt|All|*.*";
-            //if (openFileDialog.ShowDialog() == true)
-            //{
-            //   List<string> ds =  Handlers.ImportDanhSachToken(openFileDialog.FileName);
-            //    foreach (var item in ds)
-            //    {
-            //        danhSach.Add(new InformatonFacebook() { Token = item });
-            //    }
-            //}
-            //------------------------------------------
             InputDataLogin inputDataLogin = new InputDataLogin(true);
             inputDataLogin.Chon += (_sender, _args) =>
             {
@@ -90,7 +80,10 @@ namespace AutoTool
         }
         public async void Backup(InformatonFacebook info)
         {
-
+            //Đăng nhập FB
+            LoginFaceBook.getInstance.CreateWebDriver("https://www.facebook.com/");
+            LoginFaceBook.getInstance.Login();
+            //---------------------------------
             string respone = "";
             info.Status = "Đang check live .....";
             HttpClient httpRequest = new HttpClient();
@@ -104,6 +97,7 @@ namespace AutoTool
             catch
             {
                 info.Status = "Token died!";
+                danhSachTaiKhoan.Remove(info);
                 GC.Collect();
                 return;
             }
@@ -141,6 +135,7 @@ namespace AutoTool
                 }
                 catch
                 {
+                    danhSachTaiKhoan.Remove(info);
                     info.Status = "Token died!";
                     GC.Collect();
                     return;
@@ -155,44 +150,57 @@ namespace AutoTool
                         if (info.IsCheck)
                         {
                             info.Status = "Đang backup...";
-                            XuLyBackups.getInstance.TaoFile(info.UID, (strResult) =>
+                            XuLyBackups.getInstance.TaoFile(info.UID);
+                            for (int i = 0; i < 1; i++)
                             {
-                                // 25
-                                List<string> danhSachAnh = new List<string>();
-                                int soBanBe = info.Friends;
-                                int tempNumber = 0;
-                                string http_url_fr_POST = "https://graph.facebook.com";
-                                string respone_fr_POST = "";
-                                for (int i = 0; i < soBanBe; i++)
+                                if (dataJson_fr["data"][i]["id"] != null && dataJson_fr["data"][i]["name"] != null)
                                 {
-                                    if (dataJson_fr["data"][i]["id"] != null)
+                                    string _id = dataJson_fr["data"][i]["id"].ToString();
+                                    string _name = dataJson_fr["data"][i]["name"].ToString();
+                                    try
                                     {
-                                        tempNumber++;
-                                        danhSachAnh.Add(dataJson_fr["data"][i]["id"].ToString());
-                                        string paramFriend = "{\"method\":\"GET\",\"relative_url\":\"?ids=" + dataJson_fr["data"][i]["id"].ToString() +
-                                                                "&fields=id,name,picture,photos.limit(" +
-                                                                 SO_ANH.ToString() + "){source,width,height}\"},"; 
-                                        if ((tempNumber == 50 ? true : i == soBanBe - 1))
+                                        await Task.Run(() =>
                                         {
-                                            paramFriend = string.Concat(new string[] { "access_token=", Uri.EscapeDataString(paramFriend),
-                                                "&batch=", Uri.EscapeDataString("["+ paramFriend + "]") });
-
-                                        }
+                                            // Đang nhập facebook
+                                            LoginFaceBook.getInstance.Naviga("https://www.facebook.com/" + _id + "/photos");
+                                        });
+                                    }
+                                    catch
+                                    {
+                                        info.Status = "Token died!";
+                                        danhSachTaiKhoan.Remove(info);
+                                        GC.Collect();
+                                        return;
+                                    } 
+                                    finally
+                                    {
+                                        GC.Collect();
                                     }
                                 }
-                                // CANNOT
-
-                            });
+                            }
+                            info.Status = "Backup thành công";
+                            info.IsCheck = false;
                         }
                         else
                         {
                             return;
                         }
                     }
-
+                    else
+                    {
+                        info.Status = "Token died!";
+                        danhSachTaiKhoan.Remove(info);
+                        GC.Collect();
+                        return;
+                    }
                 }
-
-
+                else
+                {
+                    info.Status = "Token died!";
+                    danhSachTaiKhoan.Remove(info);
+                    GC.Collect();
+                    return;
+                }
             }
 
         }
