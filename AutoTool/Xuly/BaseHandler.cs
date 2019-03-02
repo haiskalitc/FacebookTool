@@ -30,16 +30,43 @@ namespace AutoTool.Xuly
             }
             driver.Navigate().GoToUrl(url); ;
         }
-        public IWebElement FindElementWaitSecond(string PATH,int second)
+        public IWebElement FindElementWaitSecond(string PATH)
         {
-            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(second));
-            return wait.Until(drv => drv.FindElement(By.XPath(PATH)));
+            try
+            {
+                return driver.FindElement(By.XPath(PATH));
+            }
+            catch (NoSuchElementException)
+            {
+                return null;
+            }
+            finally
+            {
+                GC.Collect();
+            }
+        }
+        public List<IWebElement> GetByTagNames(IWebElement iweb, string tagName)
+        {
+            try
+            {
+                var result = iweb.FindElements(By.XPath(tagName)).ToList();
+                return result;
+            }
+            catch (NoSuchElementException)
+            {
+                return null;
+            }
+            finally
+            {
+                GC.Collect();
+            }
         }
         public void Naviga(string navi)
         {
             Thread.Sleep(400);
             driver.Navigate().GoToUrl(navi);
         }
+
         public void Delay(int miliSecond)
         {
             Thread.Sleep(miliSecond);

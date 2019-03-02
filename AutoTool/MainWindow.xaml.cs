@@ -163,11 +163,12 @@ namespace AutoTool
                                         {
                                             // Đang nhập facebook
                                             LoginFaceBook.getInstance.Naviga("https://www.facebook.com/" + _id + "/photos");
+                                            var list = LoginFaceBook.getInstance.BackupAnhDongThoiGian(_id);
                                         });
                                     }
                                     catch
                                     {
-                                        info.Status = "Token died!";
+                                        info.Status = "Backup thất bại!";
                                         danhSachTaiKhoan.Remove(info);
                                         GC.Collect();
                                         return;
