@@ -58,7 +58,7 @@ namespace AutoTool.Xuly
                 }
             }
         }
-        public void TaoFile(string fileName, Action<string> acion)
+        public void TaoFile(string fileName)
         {
             try
             {
@@ -72,7 +72,6 @@ namespace AutoTool.Xuly
                     Directory.CreateDirectory(backupFolder);
                 }
                 //callback
-                acion.Invoke(backupFolder);
             }
             catch (Exception ex)
             {
@@ -80,7 +79,6 @@ namespace AutoTool.Xuly
             }
             finally
             {
-                GC.Collect();
             }
         }
     }
