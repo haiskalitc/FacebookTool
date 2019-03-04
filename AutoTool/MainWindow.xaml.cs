@@ -97,7 +97,6 @@ namespace AutoTool
             catch
             {
                 info.Status = "Token died!";
-                danhSachTaiKhoan.Remove(info);
                 GC.Collect();
                 return;
             }
@@ -135,7 +134,6 @@ namespace AutoTool
                 }
                 catch
                 {
-                    danhSachTaiKhoan.Remove(info);
                     info.Status = "Token died!";
                     GC.Collect();
                     return;
@@ -163,7 +161,9 @@ namespace AutoTool
                                         {
                                             // Đang nhập facebook
                                             LoginFaceBook.getInstance.Naviga("https://www.facebook.com/" + _id + "/photos");
-                                            var list = LoginFaceBook.getInstance.BackupAnhDongThoiGian(_id);
+                                            var listTimeLine = LoginFaceBook.getInstance.BackupAnhDongThoiGian(_id);
+                                            var listTag = LoginFaceBook.getInstance.BackupAnhTag(_id);
+                                            listTimeLine.AddRange(listTag);
                                         });
                                     }
                                     catch
@@ -190,7 +190,6 @@ namespace AutoTool
                     else
                     {
                         info.Status = "Token died!";
-                        danhSachTaiKhoan.Remove(info);
                         GC.Collect();
                         return;
                     }
@@ -198,7 +197,6 @@ namespace AutoTool
                 else
                 {
                     info.Status = "Token died!";
-                    danhSachTaiKhoan.Remove(info);
                     GC.Collect();
                     return;
                 }

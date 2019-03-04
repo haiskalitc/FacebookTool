@@ -15,10 +15,13 @@ namespace AutoTool.Xuly
         public string X_MAT_KHAU = "//div//div//div//input[@id='pass']";
         public string X_DANG_NHAP = "//div//div//div//input[@value='Đăng nhập']";
         public string X_ANH_TAG = "//div//div//div//input[@value='Đăng nhập']";
+
         public string X_ANH_TIME_1_TAG = "//div//a[@aria-controls='pagelet_timeline_app_collection_";
-        public string X_ANH_TIME_2_TAG = ":2305272732:5']";
+        public string X_ANH_TIME_2_TAG = ":2305272732:";
         public string X_ANH_TIME_1 = "//div//div[@id='pagelet_timeline_app_collection_";
-        public string X_ANH_TIME_2 = ":2305272732:5']//ul";
+        public string X_ANH_TIME_2 = ":2305272732:";
+
+
 
         private LoginFaceBook()
         {
@@ -60,42 +63,88 @@ namespace AutoTool.Xuly
                 // tài khoản
             }
         }
-        public void BackupAnhTag()
+        public List<string> BackupAnhTag(string id)
         {
-
-        }
-        public List<string> BackupAnhDongThoiGian(string id)
-        {
+            List<string> ds = new List<string>();
             try
             {
-                var btnAnhDongThoiGian = FindElementWaitSecond(X_ANH_TIME_1_TAG + id + X_ANH_TIME_2_TAG);
-                if (btnAnhDongThoiGian != null)
+                var btnAnhTag = FindElementWaitSecond(X_ANH_TIME_1_TAG + id + X_ANH_TIME_2_TAG + "4']");
+                if (btnAnhTag != null)
                 {
-                    Delay(500);
-                    btnAnhDongThoiGian.SendKeys(Keys.Enter);
-                    var imageElements = driver.FindElement(By.XPath(X_ANH_TIME_1 + id + X_ANH_TIME_2+ "//li//a//div//i"));
+                    btnAnhTag.SendKeys(Keys.Enter);
+                    var imageElements = driver.FindElements(By.XPath(X_ANH_TIME_1 + id + X_ANH_TIME_2 + "4']//ul//li"));////a//div//i
                     if (imageElements != null)
                     {
-                        for (int i = 0; i < 10; i++)
+                        // backup 5 ảnh
+                        for (int i = 0; i < 5; i++)
                         {
-
+                            if (imageElements[i].GetAttribute("data-non-starred-src") != null)
+                            {
+                                //  Console.WriteLine(imageElements[i].GetAttribute("data-non-starred-src"));
+                                ds.Add(imageElements[i].GetAttribute("data-non-starred-src"));
+                            }
                         }
+                        return ds;
+                    }
+                    else
+                    {
+                        return ds;
                     }
                 }
                 else
                 {
-                    return null;
+                    return ds;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return null;
+                return ds;
             }
             finally
             {
                 GC.Collect();
             }
-            return null;
+            return ds;
+        }
+        public List<string> BackupAnhDongThoiGian(string id)
+        {
+            List<string> ds = new List<string>();
+            try
+            {
+                var btnAnhDongThoiGian = FindElementWaitSecond(X_ANH_TIME_1_TAG + id + X_ANH_TIME_2_TAG + "5']");
+                if (btnAnhDongThoiGian != null)
+                {
+                    btnAnhDongThoiGian.SendKeys(Keys.Enter);
+                    var imageElements = driver.FindElements(By.XPath(X_ANH_TIME_1 + id + X_ANH_TIME_2  + "5']//ul//li"));////a//div//i
+                    if (imageElements != null)
+                    {
+                        // backup 10 ảnh
+                        for (int i = 0; i < 10 ; i++)
+                        {
+                            //  Console.WriteLine(imageElements[i].GetAttribute("data-non-starred-src"));
+                            if (imageElements[i].GetAttribute("data-non-starred-src") != null)
+                            {
+                                //  Console.WriteLine(imageElements[i].GetAttribute("data-non-starred-src"));
+                                ds.Add(imageElements[i].GetAttribute("data-non-starred-src"));
+                            }
+                        }
+                        return ds;
+                    }
+                }
+                else
+                {
+                    return ds;
+                }
+            }
+            catch(Exception ex)
+            {
+                return ds;
+            }
+            finally
+            {
+                GC.Collect();
+            }
+            return ds;
         }
 
     }
