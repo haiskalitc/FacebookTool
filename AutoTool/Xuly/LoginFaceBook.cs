@@ -39,17 +39,14 @@ namespace AutoTool.Xuly
             var taiKhoan = FindElementWaitSecond(X_TAIKHOAN);
             if (taiKhoan != null)
             {
-                Delay(800);
                 taiKhoan.SendKeys(TAI_KHOAN);
                 var matKhau = FindElementWaitSecond(X_MAT_KHAU);
                 if (matKhau != null)
                 {
-                    Delay(800);
                     matKhau.SendKeys(MAT_KHAU);
                     var buttonDangNhap = FindElementWaitSecond(X_DANG_NHAP);
                     if (buttonDangNhap != null)
                     {
-                        Delay(500);
                         buttonDangNhap.Click();
                     }
                 }
@@ -80,7 +77,6 @@ namespace AutoTool.Xuly
                         {
                             if (imageElements[i].GetAttribute("data-non-starred-src") != null)
                             {
-                                //  Console.WriteLine(imageElements[i].GetAttribute("data-non-starred-src"));
                                 ds.Add(imageElements[i].GetAttribute("data-non-starred-src"));
                             }
                         }
@@ -121,10 +117,8 @@ namespace AutoTool.Xuly
                         // backup 10 ảnh
                         for (int i = 0; i < 10 ; i++)
                         {
-                            //  Console.WriteLine(imageElements[i].GetAttribute("data-non-starred-src"));
                             if (imageElements[i].GetAttribute("data-non-starred-src") != null)
                             {
-                                //  Console.WriteLine(imageElements[i].GetAttribute("data-non-starred-src"));
                                 ds.Add(imageElements[i].GetAttribute("data-non-starred-src"));
                             }
                         }

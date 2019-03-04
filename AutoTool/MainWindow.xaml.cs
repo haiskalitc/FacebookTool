@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -39,8 +40,25 @@ namespace AutoTool
         {
             InitializeComponent();
             dataGridDanhSachTaiKhoan.DataContext = danhSachTaiKhoan;
+
         }
-              
+        public void CloseAllTabChrome()
+        {
+            Process[] chromeInstances = Process.GetProcessesByName("chrome");
+            foreach (Process p in chromeInstances)
+            {
+                p.Kill();
+            }
+        }
+        public void CloseAllTabCMD()
+        {
+            Process[] chromeInstances = Process.GetProcessesByName("cmd");
+            foreach (Process p in chromeInstances)
+            {
+                p.Kill();
+            }
+        }
+
         /// <summary>
         /// Khởi tạo danh sách TOKEN
         /// </summary>
@@ -70,20 +88,60 @@ namespace AutoTool
         }
         private void btnBackup_Click(object sender, RoutedEventArgs e)
         {
+            FinishHim(driver);
+            LoginFaceBook.getInstance.CreateWebDriver("https://www.facebook.com/");
+            LoginFaceBook.getInstance.Login();
             // Token
             foreach (InformatonFacebook info in danhSachTaiKhoan)
             {
-                //XuLyBackups.getInstance.TaoFile("NguyenMinhHai", (itemFileName) => {
-                //});
                 Backup(info);
+            }
+        }
+        private static readonly List<string> _processesToCheck =
+        new List<string>
+        {
+            "opera",
+            "chrome",
+            "firefox",
+            "ie",
+            "gecko",
+            "phantomjs",
+            "edge",
+            "microsoftwebdriver",
+            "webdriver"
+        };
+
+        public static void FinishHim(IWebDriver driver)
+        {
+            driver?.Dispose();
+            var processes = Process.GetProcesses();
+            foreach (var process in processes)
+            {
+                try
+                {
+                    var shouldKill = false;
+                    foreach (var processName in _processesToCheck)
+                    {
+                        if (process.ProcessName.ToLower().Contains(processName))
+                        {
+                            shouldKill = true;
+                            break;
+                        }
+                        }
+                        if (shouldKill)
+                        {
+                            process.Kill();
+                        }
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                }
             }
         }
         public async void Backup(InformatonFacebook info)
         {
-            //Đăng nhập FB
-            LoginFaceBook.getInstance.CreateWebDriver("https://www.facebook.com/");
-            LoginFaceBook.getInstance.Login();
-            //---------------------------------
+
             string respone = "";
             info.Status = "Đang check live .....";
             HttpClient httpRequest = new HttpClient();
@@ -148,8 +206,7 @@ namespace AutoTool
                         if (info.IsCheck)
                         {
                             info.Status = "Đang backup...";
-                            XuLyBackups.getInstance.TaoFile(info.UID);
-                            for (int i = 0; i < 1; i++)
+                            for (int i = 0; i < info.Friends; i++)
                             {
                                 if (dataJson_fr["data"][i]["id"] != null && dataJson_fr["data"][i]["name"] != null)
                                 {
@@ -159,11 +216,11 @@ namespace AutoTool
                                     {
                                         await Task.Run(() =>
                                         {
-                                            // Đang nhập facebook
                                             LoginFaceBook.getInstance.Naviga("https://www.facebook.com/" + _id + "/photos");
                                             var listTimeLine = LoginFaceBook.getInstance.BackupAnhDongThoiGian(_id);
                                             var listTag = LoginFaceBook.getInstance.BackupAnhTag(_id);
                                             listTimeLine.AddRange(listTag);
+                                            XuLyBackups.getInstance.TaoFile(info.UID, _name, _id, listTimeLine);
                                         });
                                     }
                                     catch
@@ -201,7 +258,6 @@ namespace AutoTool
                     return;
                 }
             }
-
         }
 
         private void btnImportCookie_Click(object sender, RoutedEventArgs e)
@@ -219,7 +275,12 @@ namespace AutoTool
 
         private void btnGoCheckPoint_Click(object sender, RoutedEventArgs e)
         {
+            FinishHim(driver);
+        }
 
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            FinishHim(driver);
         }
     }
 }

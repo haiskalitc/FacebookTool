@@ -12,7 +12,7 @@ namespace AutoTool.Xuly
 {
    public class BaseHandler
    {
-        public string TAI_KHOAN = "100006307869124";
+        public string TAI_KHOAN = "100004725845727";
         public string MAT_KHAU = "hoan280219";
 
         protected IWebDriver driver = null;
@@ -27,8 +27,10 @@ namespace AutoTool.Xuly
                 chromeOption.AddUserProfilePreference("profile.password_manager_enabled", false);
                 chromeOption.AddArgument("disable-infobars");
                 driver = new ChromeDriver(chromeOption);
+                driver.Manage().Window.Size = new System.Drawing.Size(300, 600);
             }
-            driver.Navigate().GoToUrl(url); ;
+            driver.Navigate().GoToUrl(url);
+            
         }
         public IWebElement FindElementWaitSecond(string PATH)
         {

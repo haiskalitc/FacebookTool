@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AutoTool"
         mc:Ignorable="d"
-        WindowStyle="None"
+        WindowStyle="ToolWindow"
+        Closing="Window_Closing"
         WindowStartupLocation="CenterScreen"
         Title="MainWindow" Height="700" Width="1400">
     <Grid>
@@ -306,7 +307,8 @@
                     <!--Status-->
                     <DataGridTemplateColumn     
                     CanUserSort="True"
-                    Width="0.8*">
+                    Width="1.5*"
+                       >
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock       
@@ -324,6 +326,7 @@
                         <DataGridTemplateColumn.HeaderTemplate>
                             <DataTemplate>
                                 <TextBlock 
+                                    HorizontalAlignment="Center"
                                 Text="Status">
                                 </TextBlock>
                             </DataTemplate>

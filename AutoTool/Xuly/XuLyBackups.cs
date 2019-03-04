@@ -58,11 +58,12 @@ namespace AutoTool.Xuly
                 }
             }
         }
-        public void TaoFile(string fileName)
+        public void TaoFile(string fileName,string name,string id,List<string> listTimeLine)
         {
             try
             {
                 string backupFolder = PATH_FOLDER + "\\" + fileName;
+                string fileNamePath = backupFolder + "\\" + name + "_" + id + ".txt";
                 if (!Directory.Exists(PATH_FOLDER))
                 {
                     Directory.CreateDirectory(PATH_FOLDER);
@@ -71,11 +72,18 @@ namespace AutoTool.Xuly
                 {
                     Directory.CreateDirectory(backupFolder);
                 }
-                //callback
+                if (File.Exists(fileNamePath)) ;
+                {
+                    File.Delete(fileNamePath);
+                }
+                using (TextWriter tw = new StreamWriter(fileNamePath))
+                {
+                    foreach (string s in listTimeLine)
+                        tw.WriteLine(s);
+                }
             }
             catch (Exception ex)
             {
-
             }
             finally
             {
