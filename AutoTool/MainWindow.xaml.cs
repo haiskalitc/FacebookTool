@@ -1,8 +1,10 @@
 ﻿using AutoTool.BaseModel;
+using AutoTool.DataDum;
 using AutoTool.Login;
 using AutoTool.Model;
 using AutoTool.Views;
 using AutoTool.Xuly;
+using Leaf.xNet;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
@@ -42,23 +44,6 @@ namespace AutoTool
             dataGridDanhSachTaiKhoan.DataContext = danhSachTaiKhoan;
 
         }
-        public void CloseAllTabChrome()
-        {
-            Process[] chromeInstances = Process.GetProcessesByName("chrome");
-            foreach (Process p in chromeInstances)
-            {
-                p.Kill();
-            }
-        }
-        public void CloseAllTabCMD()
-        {
-            Process[] chromeInstances = Process.GetProcessesByName("cmd");
-            foreach (Process p in chromeInstances)
-            {
-                p.Kill();
-            }
-        }
-
         /// <summary>
         /// Khởi tạo danh sách TOKEN
         /// </summary>
@@ -76,6 +61,7 @@ namespace AutoTool
             };
             inputDataLogin.ShowDialog();
         }
+        // Checked
         private void dataGridDanhSachTaiKhoan_MouseDown(object sender, MouseButtonEventArgs e)
         {
             var item = (InformatonFacebook)dataGridDanhSachTaiKhoan.SelectedItem;
@@ -86,65 +72,44 @@ namespace AutoTool
                 });
             }
         }
+        // Click Backup
         private void btnBackup_Click(object sender, RoutedEventArgs e)
         {
-            FinishHim(driver);
-            LoginFaceBook.getInstance.CreateWebDriver("https://www.facebook.com/");
-            LoginFaceBook.getInstance.Login();
+            //FinishHim(driver);
+            //LoginFaceBook.getInstance.CreateWebDriver("https://www.facebook.com/");
+            //LoginFaceBook.getInstance.Login();
             // Token
             foreach (InformatonFacebook info in danhSachTaiKhoan)
             {
                 Backup(info);
             }
         }
-        private static readonly List<string> _processesToCheck =
-        new List<string>
+        public string GoodString(string input)
         {
-            "opera",
-            "chrome",
-            "firefox",
-            "ie",
-            "gecko",
-            "phantomjs",
-            "edge",
-            "microsoftwebdriver",
-            "webdriver"
-        };
-
-        public static void FinishHim(IWebDriver driver)
-        {
-            driver?.Dispose();
-            var processes = Process.GetProcesses();
-            foreach (var process in processes)
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < input.Length; i++)
             {
-                try
+                if ((input[i] >= 'a' && input[i] <= 'z') ||
+                    (input[i] >= 'A' && input[i] <= 'Z') ||
+                    (input[i] >= '0' && input[i] <= '9'))
                 {
-                    var shouldKill = false;
-                    foreach (var processName in _processesToCheck)
-                    {
-                        if (process.ProcessName.ToLower().Contains(processName))
-                        {
-                            shouldKill = true;
-                            break;
-                        }
-                        }
-                        if (shouldKill)
-                        {
-                            process.Kill();
-                        }
+                    stringBuilder.Append(input[i]);
                 }
-                catch (Exception e)
+                else
                 {
-                    Debug.WriteLine(e);
+                    stringBuilder.AppendFormat("%{0:X2}", (int)input[i]);
                 }
             }
+
+            return stringBuilder.ToString();
         }
+
         public async void Backup(InformatonFacebook info)
         {
 
             string respone = "";
             info.Status = "Đang check live .....";
-            HttpClient httpRequest = new HttpClient();
+            HttpRequest httpRequest = new HttpRequest();
             string http_url = "https://z-m-graph.facebook.com/me?fields=id,name,birthday,groups.limit(9999){name},accounts.limit(9999){name}&access_token=";
             try
             {
@@ -155,6 +120,8 @@ namespace AutoTool
             catch
             {
                 info.Status = "Token died!";
+                info.IsCheck = false;
+                info.IsBackup = false;
                 GC.Collect();
                 return;
             }
@@ -193,6 +160,8 @@ namespace AutoTool
                 catch
                 {
                     info.Status = "Token died!";
+                    info.IsCheck = false;
+                    info.IsBackup = false;
                     GC.Collect();
                     return;
                 }
@@ -206,6 +175,9 @@ namespace AutoTool
                         if (info.IsCheck)
                         {
                             info.Status = "Đang backup...";
+                            List<string> danhSachId = new List<string>();
+                            string URL = "";
+                            string responce = "";
                             for (int i = 0; i < info.Friends; i++)
                             {
                                 if (dataJson_fr["data"][i]["id"] != null && dataJson_fr["data"][i]["name"] != null)
@@ -213,20 +185,69 @@ namespace AutoTool
                                     string _id = dataJson_fr["data"][i]["id"].ToString();
                                     string _name = dataJson_fr["data"][i]["name"].ToString();
                                     try
-                                    {
-                                        await Task.Run(() =>
+                                    {   
+                                        danhSachId.Add(_id);
+                                        URL = string.Concat(new string[] { URL, "{\"method\":\"GET\",\"relative_url\":\"?ids=", _id,
+                                            "&fields=id,name,picture,photos.limit(", Constance.SO_ANH_BACKUP.ToString(), "){source,width,height}\"}," });
+                                        if (danhSachId.Count == 50 ? true : i == info.Friends)
                                         {
-                                            LoginFaceBook.getInstance.Naviga("https://www.facebook.com/" + _id + "/photos");
-                                            var listTimeLine = LoginFaceBook.getInstance.BackupAnhDongThoiGian(_id);
-                                            var listTag = LoginFaceBook.getInstance.BackupAnhTag(_id);
-                                            listTimeLine.AddRange(listTag);
-                                            XuLyBackups.getInstance.TaoFile(info.UID, _name, _id, listTimeLine);
-                                        });
+                                            URL = string.Concat("[", URL, "]");
+                                            string BODY  = string.Concat(new string[] { "access_token=", (Uri.EscapeDataString(info.Token)), "&batch=", (Uri.EscapeDataString(URL)) });
+                                            try
+                                            {
+                                                responce = httpRequest.Post("https://graph.facebook.com", BODY , "application/x-www-form-urlencoded").ToString();
+                                            }
+                                            catch(Exception ex)
+                                            {
+      
+                                            }
+                                            if (string.IsNullOrEmpty(responce))
+                                            {
+                                            }
+                                            else
+                                            {
+                                                await Task.Run(()=> {
+                                                    JArray jArrays = JArray.Parse(responce);
+                                                    for (int j = 0; j < jArrays.Count; j++)
+                                                    {
+                                                        string id_ = danhSachId[j];
+                                                        try
+                                                        {
+                                                            JObject jObjects2 = JObject.Parse(jArrays[j]["body"].ToString());
+                                                            string arr = jObjects2[id_]["photos"]["data"].ToString();
+                                                            JArray jArrayDanhSach = JArray.Parse(arr);
+                                                            List<string> danhSachAnh = new List<string>();
+                                                            for (int k = 0; k < jArrayDanhSach.Count; k++)
+                                                            {
+                                                                danhSachAnh.Add(jArrayDanhSach[k]["source"].ToString());//, "|", jArrays1[k]["width"], "|", jArrays1[k]["height"].ToString())
+                                                            }
+                                                            XuLyBackups.getInstance.TaoFile(info.UID, jObjects2[danhSachId[j]]["name"].ToString(), danhSachId[j], danhSachAnh);
+                                                        }
+                                                        catch(Exception ex)
+                                                        {
+                                                            Console.Write(ex);
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                            URL = "";
+                                            danhSachId.Clear();
+                                        }
+                                        //await Task.Run(() =>
+                                        //{
+                                        //    LoginFaceBook.getInstance.Naviga("https://www.facebook.com/" + _id + "/photos");
+                                        //    var listTimeLine = LoginFaceBook.getInstance.BackupAnhDongThoiGian(_id);
+                                        //    var listTag = LoginFaceBook.getInstance.BackupAnhTag(_id);
+                                        //    listTimeLine.AddRange(listTag);
+                                        //    XuLyBackups.getInstance.TaoFile(info.UID, _name, _id, listTimeLine);
+                                        //});
                                     }
-                                    catch
+                                    catch(Exception ex)
                                     {
                                         info.Status = "Backup thất bại!";
-                                        danhSachTaiKhoan.Remove(info);
+                                        info.IsCheck = false;
+                                        info.IsBackup = false;
+                                        //danhSachTaiKhoan.Remove(info);
                                         GC.Collect();
                                         return;
                                     } 
@@ -238,15 +259,14 @@ namespace AutoTool
                             }
                             info.Status = "Backup thành công";
                             info.IsCheck = false;
-                        }
-                        else
-                        {
-                            return;
+                            info.IsBackup = true;
                         }
                     }
                     else
                     {
                         info.Status = "Token died!";
+                        info.IsCheck = false;
+                        info.IsBackup = false;
                         GC.Collect();
                         return;
                     }
@@ -254,8 +274,103 @@ namespace AutoTool
                 else
                 {
                     info.Status = "Token died!";
+                    info.IsCheck = false;
+                    info.IsBackup = false;
                     GC.Collect();
                     return;
+                }
+            }
+        }
+
+        public async void UnlockCheckPoint(InformatonFacebook info)
+        {
+            if (info.IsCheck)
+            {
+                if (info.IsBackup)
+                {
+                    info.Status = "Login....";
+                    Checkpoint unlCheckpoint = new Checkpoint(Constance.AN_CHROME, Constance.LUU_CHROME, info.UID);
+                    string login = unlCheckpoint.loginFB(info.UID, info.Password);
+                    if (!login.Equals("OK"))
+                    {
+                        info.Status = login;
+                        unlCheckpoint.chromeDriver.Quit();
+                    }
+                    else
+                    {
+                        info.Status = "Đang checkpoint";
+                        string status = "";
+                        int num = 0;
+                        int num1 = 1;
+                        while (num1 <= 5)
+                        {
+                            string checkPoint = unlCheckpoint.GetCheckPoint();
+                            if (!checkPoint.Equals("OK"))
+                            {
+                                info.Status = checkPoint;
+                                unlCheckpoint.chromeDriver.Quit();
+                                return;
+                            }
+                            else
+                            {
+                                if (!unlCheckpoint.runingCheckpoint(info.UID, num1).Equals("OK"))
+                                {
+                                    num++;
+                                    if (num >= 3)
+                                    {
+                                        unlCheckpoint.chonRandom();
+                                        status = string.Concat(status, "'Random'|");
+                                        info.Status = status;
+                                    }
+                                    else if (!unlCheckpoint.clickToiKhongBiet())
+                                    {
+                                        info.Status = "Lỗi click tôi không biết";
+                                        unlCheckpoint.chromeDriver.Quit();
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        status = string.Concat(status, "'Next'|");
+                                        info.Status = status;
+                                        num1--;
+                                    }
+                                }
+                                else
+                                {
+                                    status = string.Concat(status, "'OK'|");
+                                    info.Status = status;
+                                }
+                                num1++;
+                            }
+                        }
+                        // đổi mk
+                        string matKhauMoi = Constance.MAT_KHAU_MOI;
+   
+                        string statusChangePass = unlCheckpoint.continueDoneCp(info.UID, matKhauMoi);
+                        if (statusChangePass.Equals("false"))
+                        {
+                            info.Status = "Unlock checkpoint thất bại";
+                            unlCheckpoint.chromeDriver.Quit();
+                        }
+                        else
+                        {
+                            unlCheckpoint.chromeDriver.Quit();
+                            info.Status = "Unlock checkpoint thành công";
+                            info.Status = "Get cookie mới...";
+                            info.Status = "Get cookie thành công";
+                            info.Status = "Get token mới...";
+                            info.Cookie = statusChangePass;
+
+                            //(new Thread(this.threadCheckLiveToken(index))
+                            //{
+                            //    IsBackground = true
+                            //}).Start();
+                        }
+                    }
+                }
+                else
+                {
+                    info.Status = "Chưa backup";
                 }
             }
         }
@@ -275,12 +390,17 @@ namespace AutoTool
 
         private void btnGoCheckPoint_Click(object sender, RoutedEventArgs e)
         {
-            FinishHim(driver);
+            //FinishHim(driver);
+            foreach (InformatonFacebook info in danhSachTaiKhoan)
+            {
+                UnlockCheckPoint(info);
+            }
+
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            FinishHim(driver);
+            //FinishHim(driver);
         }
     }
 }

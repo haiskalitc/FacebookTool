@@ -40,6 +40,30 @@ namespace AutoTool.Xuly
                 }
             }
         }
+        public async Task GetDataJson2(string url, string param, Action<string> acton)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                client.DefaultRequestHeaders
+                  .Accept
+                  .Add(new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+                using (HttpResponseMessage response = await client.GetAsync(url + param))
+                {
+                    
+                    using (HttpContent content = response.Content)
+                    {
+                        string result = await content.ReadAsStringAsync();
+
+                        // ... Display the result.
+                        if (result != null &&
+                            result.Length >= 50)
+                        {
+                            acton.Invoke(result);
+                        }
+                    }
+                }
+            }
+        }
         public async Task GetDataJsonPost(string url, string param, Action<string> acton)
         {
             var myContent = JsonConvert.SerializeObject(param);

@@ -166,5 +166,18 @@ namespace AutoTool.Model
                 }
             }
         }
+        private bool _isBackup;
+        public bool IsBackup
+        {
+            get { return _isBackup; }
+            set
+            {
+                if (_isBackup != value)
+                {
+                    _isBackup = value;
+                    RaisePropertyChanged("IsBackup");
+                }
+            }
+        }
     }
 }

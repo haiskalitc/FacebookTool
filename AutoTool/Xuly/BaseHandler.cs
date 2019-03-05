@@ -12,9 +12,6 @@ namespace AutoTool.Xuly
 {
    public class BaseHandler
    {
-        public string TAI_KHOAN = "100004725845727";
-        public string MAT_KHAU = "hoan280219";
-
         protected IWebDriver driver = null;
         // khoi tao
         public void CreateWebDriver(string url)
@@ -68,11 +65,9 @@ namespace AutoTool.Xuly
             Thread.Sleep(400);
             driver.Navigate().GoToUrl(navi);
         }
-
         public void Delay(int miliSecond)
         {
             Thread.Sleep(miliSecond);
         }
-
     }
 }

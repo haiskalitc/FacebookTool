@@ -16,6 +16,8 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -26,6 +28,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,8 +38,12 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Leaf.xNet, Version=5.1.64.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Leaf.xNet.5.1.64\lib\net452\Leaf.xNet.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -72,6 +79,7 @@
     </ApplicationDefinition>
     <Compile Include="BaseModel\BindableBase.cs" />
     <Compile Include="BaseModel\NotifiableCollection.cs" />
+    <Compile Include="DataDum\Constance.cs" />
     <Compile Include="Login\LoginHandler.cs" />
     <Compile Include="Model\DataBackup.cs" />
     <Compile Include="Model\InformatonFacebook.cs" />
@@ -79,6 +87,8 @@
       <DependentUpon>InputDataLogin.xaml</DependentUpon>
     </Compile>
     <Compile Include="Xuly\BaseHandler.cs" />
+    <Compile Include="Xuly\Checkpoint.cs" />
+    <Compile Include="Xuly\Function.cs" />
     <Compile Include="Xuly\Handlers.cs" />
     <Compile Include="Xuly\LoginFaceBook.cs" />
     <Compile Include="Xuly\SeleniumHandler.cs" />

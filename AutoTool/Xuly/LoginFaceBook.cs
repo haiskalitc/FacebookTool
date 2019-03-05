@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using AutoTool.DataDum;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System;
@@ -39,11 +40,11 @@ namespace AutoTool.Xuly
             var taiKhoan = FindElementWaitSecond(X_TAIKHOAN);
             if (taiKhoan != null)
             {
-                taiKhoan.SendKeys(TAI_KHOAN);
+                taiKhoan.SendKeys(Constance.TAI_KHOAN);
                 var matKhau = FindElementWaitSecond(X_MAT_KHAU);
                 if (matKhau != null)
                 {
-                    matKhau.SendKeys(MAT_KHAU);
+                    matKhau.SendKeys(Constance.MAT_KHAU);
                     var buttonDangNhap = FindElementWaitSecond(X_DANG_NHAP);
                     if (buttonDangNhap != null)
                     {
