@@ -13,6 +13,8 @@ namespace AutoTool.Xuly
     public class XuLyBackups
     {
         public static string PATH_FOLDER = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\DataBackup";
+        public static string PATH_FOLDER_2 = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ;
+
         private XuLyBackups()
         {
         }

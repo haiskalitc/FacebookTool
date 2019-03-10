@@ -388,6 +388,7 @@
                                         Click="btnImportToken_Click">Import token</Button>
                                 <Button Margin="15"
                                         Width="100"
+                                        IsEnabled="False"
                                         Height="40" 
                                         Name="btnImportCookie" 
                                         Grid.Column="1" 

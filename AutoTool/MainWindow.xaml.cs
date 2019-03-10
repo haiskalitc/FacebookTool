@@ -18,7 +18,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using System.Threading.Tasks; 
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -57,7 +57,7 @@ namespace AutoTool
                 string dataCallback = (_sender as InputDataLogin).txtDataInput.Text;
                 bool isToken = (_sender as InputDataLogin).isToken;
                 (_sender as InputDataLogin).Close();
-                danhSachTaiKhoan.Add(new InformatonFacebook() { Token = isToken ? dataCallback : "", Cookie = !isToken ? dataCallback : "" }); 
+                danhSachTaiKhoan.Add(new InformatonFacebook() { UID = "100001891219544", Token = isToken ? dataCallback : "", Cookie = !isToken ? dataCallback : "", Password = "hoan280219" }); 
             };
             inputDataLogin.ShowDialog();
         }
@@ -117,7 +117,7 @@ namespace AutoTool
                     respone = responce;
                 });
             }
-            catch
+            catch(Exception ex)
             {
                 info.Status = "Token died!";
                 info.IsCheck = false;
@@ -128,7 +128,6 @@ namespace AutoTool
             JObject dataJson = JObject.Parse(respone);
             if (dataJson != null)
             {               
-                info.Status = "Token live!";
                 if (dataJson["id"] != null)
                 {
                     info.UID = dataJson["id"].ToString();
@@ -157,7 +156,7 @@ namespace AutoTool
                         respone_fr = responce;
                     });
                 }
-                catch
+                catch(Exception ex)
                 {
                     info.Status = "Token died!";
                     info.IsCheck = false;
@@ -165,6 +164,7 @@ namespace AutoTool
                     GC.Collect();
                     return;
                 }
+                info.Status = "Token live!";
                 JObject dataJson_fr = JObject.Parse(respone_fr);
                 if (dataJson_fr != null)
                 {
@@ -286,7 +286,7 @@ namespace AutoTool
         {
             if (info.IsCheck)
             {
-                if (info.IsBackup)
+                if (!info.IsBackup)
                 {
                     info.Status = "Login....";
                     Checkpoint unlCheckpoint = new Checkpoint(Constance.AN_CHROME, Constance.LUU_CHROME, info.UID);
@@ -383,7 +383,7 @@ namespace AutoTool
                 string dataCallback = (_sender as InputDataLogin).txtDataInput.Text;
                 bool isToken = (_sender as InputDataLogin).isToken;
                 (_sender as InputDataLogin).Close();
-                danhSachTaiKhoan.Add(new InformatonFacebook() { Token = isToken ? dataCallback : "", Cookie = !isToken ? dataCallback : "" });
+                danhSachTaiKhoan.Add(new InformatonFacebook() { Token = isToken ? dataCallback : "", Cookie = !isToken ? dataCallback : "",Password="12312312" });
             };
             inputDataLogin.ShowDialog();
         }

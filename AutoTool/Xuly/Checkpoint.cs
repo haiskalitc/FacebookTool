@@ -33,7 +33,7 @@ namespace AutoTool.Xuly
         {
             try
             {
-                ChromeDriverService chromeDriverService = ChromeDriverService.CreateDefaultService(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                ChromeDriverService chromeDriverService = ChromeDriverService.CreateDefaultService(XuLyBackups.PATH_FOLDER_2);
                 chromeDriverService.HideCommandPromptWindow = true;
                 ChromeOptions chromeOption = new ChromeOptions();
                 string directoryName = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
@@ -60,7 +60,7 @@ namespace AutoTool.Xuly
                 chromeOption.AddArgument("--user-agent=Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1");
                 this.chromeDriver = new ChromeDriver(chromeDriverService, chromeOption);
             }
-            catch
+            catch(Exception ex)
             {
             }
         }
@@ -459,7 +459,7 @@ namespace AutoTool.Xuly
                 }
                 catch
                 {
-                    str = "Không bị checkpoint hoặc không thể login";
+                    str = "Không bị checkpoint hoặc sai mật khẩu";
                     str1 = str;
                     return str1;
                 }
@@ -550,29 +550,29 @@ namespace AutoTool.Xuly
                 {
                     for (int i = 0; i < this.names.Count; i++)
                     {
-                        //string photo = function.GetPhoto(uid, this.names[i], bitmap);
-                        //if (!string.IsNullOrEmpty(photo))
-                        //{
-                        //    string[] strArrays = photo.Split(new char[] { '\n' });
-                        //    int num1 = 0;
-                        //    while (num1 < (int)strArrays.Length)
-                        //    {
-                        //        if (!this.xuLyData(strArrays[num1], bitmap, key))
-                        //        {
-                        //            num1++;
-                        //        }
-                        //        else if (!this.chonName(this.names[i]))
-                        //        {
-                        //            str = "Không tìm thấy";
-                        //            return str;
-                        //        }
-                        //        else
-                        //        {
-                        //            str = "OK";
-                        //            return str;
-                        //        }
-                        //    }
-                        //}
+                        string photo = function.GetPhoto(uid, this.names[i], bitmap);
+                        if (!string.IsNullOrEmpty(photo))
+                        {
+                            string[] strArrays = photo.Split(new char[] { '\n' });
+                            int num1 = 0;
+                            while (num1 < (int)strArrays.Length)
+                            {
+                                if (!this.xuLyData(strArrays[num1], bitmap, key))
+                                {
+                                    num1++;
+                                }
+                                else if (!this.chonName(this.names[i]))
+                                {
+                                    str = "Không tìm thấy";
+                                    return str;
+                                }
+                                else
+                                {
+                                    str = "OK";
+                                    return str;
+                                }
+                            }
+                        }
                     }
                 }
                 str = "Không tìm thấy";
